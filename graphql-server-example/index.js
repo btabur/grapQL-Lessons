@@ -11,8 +11,11 @@ const typeDefs = `#graphql
 
   # This "Book" type defines the queryable fields for every book in our data source.
   type Book {
+    id: ID!
     title: String
     author: String
+    score: Float
+    isPublished:Boolean
   }
 
   # The "Query" type is special: it lists all of the available queries that
@@ -25,7 +28,15 @@ const typeDefs = `#graphql
 
 const resolvers  = {
     Query : {
-        books: ()=> [{title:'Yabancı', author:'Albert Custom'}],
+        books: ()=> [
+          {
+            id:'fdgvadfv154',
+            title:'Yabancı',
+             author:'Albert Custom',
+             score:5.3,
+             isPublished:true
+          }
+        ],
     },
 };
 
