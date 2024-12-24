@@ -2,28 +2,7 @@
 
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-
-const author = {
-  id:1,
-  name:'Albert',
-  surname:'Camus',
-  age:40,
-  books : [{
-    id:'vszvdv',
-    title:'test title',
-    score:7.4,
-    isPublished:false
-  }]
-}
-
-const book = {
-  id:'sgbsbxfb',
-  title:'Yabancı',
-  author,
-  score:5.7,
-  isPublished:true
-}
-
+import { authors, books } from './data.js';
 
 
 const typeDefs = `#graphql
@@ -45,15 +24,26 @@ type Author {
   }
 
   type Query {
-    book: Book
-    author:Author
+    books: [Book!]
+    book(id:ID!):Book
+
+    authors:[Author!]
+    author(id:ID!):Author
   }
 `;
 
 const resolvers  = {
    Query: {
-    book:()=>book,
-    author:()=> author
+    books:()=>books,
+    book:(parent,args) => {
+      const data = books.find(book=>book.id===args.id)
+      return data
+    },
+    authors:()=> authors,
+    author:(parent,args)=> {
+      const data = authors.find((author)=> author.id === args.id)
+      return data
+    }
    }
 };
 
