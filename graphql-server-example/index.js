@@ -3,41 +3,58 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
-const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+const author = {
+  id:1,
+  name:'Albert',
+  surname:'Camus',
+  age:40,
+  books : [{
+    id:'vszvdv',
+    title:'test title',
+    score:7.4,
+    isPublished:false
+  }]
+}
 
-  # This "Book" type defines the queryable fields for every book in our data source.
+const book = {
+  id:'sgbsbxfb',
+  title:'Yabancı',
+  author,
+  score:5.7,
+  isPublished:true
+}
+
+
+
+const typeDefs = `#graphql
+
+type Author {
+  id:ID!
+  name:String!
+  surname:String
+  age:Int
+  books:[Book!]
+}
+
   type Book {
     id: ID!
-    title: String
-    author: String
+    title: String!
+    author: Author!
     score: Float
     isPublished:Boolean
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
+    book: Book
+    author:Author
   }
 `;
 
 const resolvers  = {
-    Query : {
-        books: ()=> [
-          {
-            id:'fdgvadfv154',
-            title:'Yabancı',
-             author:'Albert Custom',
-             score:5.3,
-             isPublished:true
-          }
-        ],
-    },
+   Query: {
+    book:()=>book,
+    author:()=> author
+   }
 };
 
 const server = new ApolloServer({
