@@ -19,6 +19,7 @@ type Author {
     id: ID!
     title: String!
     author: Author!
+    author_id:String!
     score: Float
     isPublished:Boolean
   }
@@ -43,6 +44,17 @@ const resolvers  = {
     author:(parent,args)=> {
       const data = authors.find((author)=> author.id === args.id)
       return data
+    }
+   },
+   Book: {
+    author:(parent)=> {
+
+      return authors.find(author=> author.id === parent.id)
+    }
+   },
+   Author: {
+    books: (parent) => {
+      return books.filter(book=> book.author_id=== parent.id)
     }
    }
 };
