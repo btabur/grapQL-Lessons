@@ -12,6 +12,9 @@ type User {
     posts:[Post!]!
     comments:[Comment!]!
 }
+input CreateUserInput {
+    fullName:String!
+}
 
 type Post {
     id:ID!
@@ -19,6 +22,11 @@ type Post {
     user_id:ID!
     user:User!
     comments:[Comment!]!
+}
+input CreatePostInput {
+    title:String!
+    user_id:ID!
+
 }
 
 type Comment {
@@ -28,6 +36,12 @@ type Comment {
     user_id:ID!
     user:User!
     post:Post!
+}
+
+input CreateCommentInput {
+    text:String!
+     post_id:ID!
+    user_id:ID!
 }
 
 type Query {
@@ -45,9 +59,9 @@ type Query {
 }
 
 type Mutation {
-    createUser(fullName:String!):User!
-    createPost(title:String!, user_id:ID!):Post!
-    createComment(text:String!, post_id:ID!, user_id:ID!): Comment!
+    createUser(data:CreateUserInput!):User!
+    createPost(data:CreatePostInput!):Post!
+    createComment(data:CreateCommentInput!): Comment!
 }
 
 
@@ -57,8 +71,8 @@ type Mutation {
 const resolvers  = {
 
     Mutation :{
-        createUser:(parent,args)=> {
-            const user ={id:nanoid(),fullName:args.fullName}
+        createUser:(parent,{data:{fullName}})=> {
+            const user ={id:nanoid(),fullName:fullName}
             users.push(user)
 
             return user
@@ -66,19 +80,17 @@ const resolvers  = {
         createPost:(parent,args)=> {
             const post = {
                 id:nanoid(),
-                title:args.title,
-                user_id:args.user_id
+                title:args.data.title,
+                user_id:args.data.user_id
             }
             posts.push(post)
 
             return post
         },
-        createComment :(parent, {text,post_id,user_id})=> {
+        createComment :(parent, {data})=> {
             const comment = {
                 id:nanoid(),
-                text,
-                post_id,
-                user_id
+                ...data
             }
             comments.push(comment);
             return comment;
