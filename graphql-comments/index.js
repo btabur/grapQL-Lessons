@@ -78,12 +78,15 @@ type Mutation {
     #user
     createUser(data:CreateUserInput!):User!
     updateUser(id:ID!, data:UpdateUserInput!):User!
+    deleteUser(id:ID!):User!
     #post
     createPost(data:CreatePostInput!):Post!
     updatePost(id:ID!,data:UpdatePostInput!):Post!
+    deletePost(id:ID!):Post!
     #comment
     createComment(data:CreateCommentInput!): Comment!
     updateComment(id:ID!,data:UpdateCommentInput!):Comment!
+    deletedComment(id:ID!):Comment!
 }
 
 
@@ -112,6 +115,16 @@ const resolvers  = {
 
             return updatedUser
         },
+        deleteUser:(parent,{id})=> {
+            const user_index = users.findIndex(user => user.id ===id)
+            if(user_index === -1) {
+                throw new Error("User not found")
+            }
+            const deletedUser = users[user_index]
+            users.splice(user_index,1)
+            return deletedUser
+
+        },
         //Post
         createPost:(parent,args)=> {
             const post = {
@@ -133,6 +146,16 @@ const resolvers  = {
                 ...data
                }
                return updatedPost
+        },  
+        deletePost:(parent,{id})=> {
+            const post_index = posts.findIndex(post => post.id ===id)
+            if(post_index === -1) {
+                throw new Error("post not found")
+            }
+            const deletedPost = posts[post_index]
+            posts.splice(post_index,1)
+            return deletedPost
+
         },
         createComment :(parent, {data})=> {
             const comment = {
@@ -153,8 +176,19 @@ const resolvers  = {
                 ...data
             }
 
-            return updatedComment
-        }
+            return upda
+        },
+        deleteComment:(parent,{id})=> {
+            const comment_index = comments.findIndex(comment => comment.id ===id)
+            if(comment_index === -1) {
+                throw new Error("Comment not found")
+            }
+            const deletedComment = comments[comment_index]
+            comments.splice(comment_index,1)
+            return deletedComment
+
+        },
+       
     },
 
     Query: {
