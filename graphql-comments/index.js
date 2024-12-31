@@ -47,6 +47,9 @@ type Comment {
     user:User!
     post:Post!
 }
+type DeleteAllOutput {
+    count:Int!
+}
 
 input CreateCommentInput {
     text:String!
@@ -58,6 +61,7 @@ input UpdateCommentInput {
     post_id:ID
     user_id:ID
 }
+
 
 
 type Query {
@@ -79,14 +83,17 @@ type Mutation {
     createUser(data:CreateUserInput!):User!
     updateUser(id:ID!, data:UpdateUserInput!):User!
     deleteUser(id:ID!):User!
+    deleteAllUser:DeleteAllOutput!
     #post
     createPost(data:CreatePostInput!):Post!
     updatePost(id:ID!,data:UpdatePostInput!):Post!
     deletePost(id:ID!):Post!
+    deleteAllPost: DeleteAllOutput!
     #comment
     createComment(data:CreateCommentInput!): Comment!
     updateComment(id:ID!,data:UpdateCommentInput!):Comment!
-    deletedComment(id:ID!):Comment!
+    deleteComment(id:ID!):Comment!
+    deleteAllComment:DeleteAllOutput!
 }
 
 
@@ -125,6 +132,14 @@ const resolvers  = {
             return deletedUser
 
         },
+        deleteAllUser :()=> {
+            const length = users.length;
+            users.splice(0,length)
+
+            return {
+                count:length
+            }
+        },
         //Post
         createPost:(parent,args)=> {
             const post = {
@@ -157,6 +172,15 @@ const resolvers  = {
             return deletedPost
 
         },
+        deleteAllPost :()=> {
+            const length = posts.length;
+            posts.splice(0,length)
+
+            return {
+                count:length
+            }
+        },
+        // comment
         createComment :(parent, {data})=> {
             const comment = {
                 id:nanoid(),
@@ -187,6 +211,14 @@ const resolvers  = {
             comments.splice(comment_index,1)
             return deletedComment
 
+        },
+        deleteAllComment :()=> {
+            const length = comments.length;
+            comments.splice(0,length)
+
+            return {
+                count:length
+            }
         },
        
     },
