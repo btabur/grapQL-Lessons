@@ -3,11 +3,13 @@
 export const users = [
     {
         id:'1',
-        fullName:'Balı Tabur'
+        fullName:'Balı Tabur',
+        age:36
     },
     {
         id:'2',
-        fullName:'Ahmet Tekin'
+        fullName:'Ahmet Tekin',
+        age:30
     },
 ]
 

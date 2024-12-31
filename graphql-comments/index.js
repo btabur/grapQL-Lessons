@@ -9,11 +9,17 @@ const typeDefs = `#graphql
 type User {
     id:ID!
     fullName:String!
+    age:Int!
     posts:[Post!]!
     comments:[Comment!]!
 }
 input CreateUserInput {
     fullName:String!
+    age:Int!
+}
+input UpdateUserInput {
+    fullName:String
+    age:Int
 }
 
 type Post {
@@ -28,6 +34,10 @@ input CreatePostInput {
     user_id:ID!
 
 }
+input UpdatePostInput {
+    title:String,
+    user_id:ID
+}   
 
 type Comment {
     id:ID!
@@ -43,6 +53,12 @@ input CreateCommentInput {
      post_id:ID!
     user_id:ID!
 }
+input UpdateCommentInput {
+    text:String
+    post_id:ID
+    user_id:ID
+}
+
 
 type Query {
     #user
@@ -59,9 +75,15 @@ type Query {
 }
 
 type Mutation {
+    #user
     createUser(data:CreateUserInput!):User!
+    updateUser(id:ID!, data:UpdateUserInput!):User!
+    #post
     createPost(data:CreatePostInput!):Post!
+    updatePost(id:ID!,data:UpdatePostInput!):Post!
+    #comment
     createComment(data:CreateCommentInput!): Comment!
+    updateComment(id:ID!,data:UpdateCommentInput!):Comment!
 }
 
 
@@ -71,12 +93,26 @@ type Mutation {
 const resolvers  = {
 
     Mutation :{
-        createUser:(parent,{data:{fullName}})=> {
-            const user ={id:nanoid(),fullName:fullName}
+        //User
+        createUser:(parent,{data:{fullName,age}})=> {
+            const user ={id:nanoid(),fullName,age }
             users.push(user)
 
             return user
         },
+        updateUser:(parent,{id,data})=> {
+            const user_index =users.findIndex(user=>user.id===id)
+            if(user_index === -1) {
+                throw new Error('User not fount')    
+            }
+           const updatedUser = users[user_index] ={
+            ...users[user_index],
+            ...data
+           }
+
+            return updatedUser
+        },
+        //Post
         createPost:(parent,args)=> {
             const post = {
                 id:nanoid(),
@@ -87,6 +123,17 @@ const resolvers  = {
 
             return post
         },
+        updatePost: (parent,{id,data})=> {
+                const post_index = posts.findIndex(post => post.id ===id)
+                if (post_index===-1) {
+                    throw new Error("post not found")
+                }
+              const updatedPost = posts[post_index]={
+                ...posts[post_index],
+                ...data
+               }
+               return updatedPost
+        },
         createComment :(parent, {data})=> {
             const comment = {
                 id:nanoid(),
@@ -94,6 +141,19 @@ const resolvers  = {
             }
             comments.push(comment);
             return comment;
+        },
+        updateComment :(parent, {id,data})=> {
+            const comment_index = comments.findIndex(comment=> comment.id ===id)
+
+            if(comment_index === -1) {
+                throw new Error('Comment not found')
+            }
+            const updatedComment = comments[comment_index]= {
+                ...comments[comment_index],
+                ...data
+            }
+
+            return updatedComment
         }
     },
 
